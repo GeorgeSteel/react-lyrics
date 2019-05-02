@@ -1,8 +1,9 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import Form from './components/Form';
+import Song from './components/Song';
+import Data from './components/Data';
 
 import axios from 'axios';
-import Song from './components/Song';
 
 function App() {
   // use 3 different states
@@ -16,8 +17,25 @@ function App() {
     const url = `https://api.lyrics.ovh/v1/${ artista }/${ cancion }`;
     const resp = await axios(url);
 
-    setLyrics(resp.data.lyrics);
+    setArtist(artista);
+
+    setLyrics(resp.data.lyrics);    
   }
+
+  const requestDataAPI = async () => {
+    if (artist) {
+      const url = `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${ artist }`;
+      const resp = await axios(url);
+
+      setData(resp.data.artists[0]);
+    }
+  }
+
+  useEffect(
+    () => {
+      requestDataAPI();
+    }, [artist]
+  )
 
   return (
     <Fragment>
@@ -27,7 +45,9 @@ function App() {
       <div className="container mt-5">
         <div className="row">
           <div className="col-md-6">
-
+            <Data
+              data={ data }
+            />
           </div>
           <div className="col-md-6">
             <Song
